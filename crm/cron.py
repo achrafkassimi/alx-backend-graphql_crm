@@ -4,10 +4,13 @@ Django-crontab job definitions for CRM application
 import os
 import django
 from datetime import datetime
+import logging
+
 
 # Setup Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'graphql_crm.settings')
 django.setup()
+logging.basicConfig(filename='/tmp/low_stock_updates_log.txt', level=logging.INFO)
 
 
 def log_crm_heartbeat():

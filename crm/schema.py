@@ -4,8 +4,40 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 import re
-
 from .models import Customer, Product, Order
+
+# crm/schema.py
+
+import graphene
+from graphene_django.types import DjangoObjectType
+from .models import Product
+
+class ProductType(DjangoObjectType):
+    class Meta:
+        model = Product
+
+class UpdateLowStockProducts(graphene.Mutation):
+    class Arguments:
+        # Define any arguments if needed
+        pass
+
+    success = graphene.Boolean()
+    updated_products = graphene.List(ProductType)
+
+    def mutate(self, info):
+        # Query products with stock < 10
+        low_stock_products = Product.objects.filter(stock__lt=10)
+
+        # Increment stock by 10
+        for product in low_stock_products:
+            product.stock += 10
+            product.save()
+
+        return UpdateLowStockProducts(success=True, updated_products=low_stock_products)
+
+class Mutation(graphene.ObjectType):
+    update_low_stock_products = UpdateLowStockProducts.Field()
+
 
 class CRMQuery(graphene.ObjectType):
     hello = graphene.String(default_value="Hello, GraphQL!")
