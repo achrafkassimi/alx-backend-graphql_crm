@@ -5,9 +5,6 @@ from django.db import transaction
 from django.utils import timezone
 import re
 from .models import Customer, Product, Order
-
-# crm/schema.py
-
 import graphene
 from graphene_django.types import DjangoObjectType
 from .models import Product
